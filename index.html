@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grocify - Smart Grocery Shopping Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 120px 0 80px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="50" cy="10" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="10" cy="60" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .user-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 3rem 0;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .toggle-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 12px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .toggle-btn.active {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+
+        /* Main Content Areas */
+        .content-section {
+            display: none;
+            padding: 80px 0;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+
+        .demo-interface {
+            background: #f8f9ff;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .grocery-list {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-name {
+            font-weight: 500;
+        }
+
+        .item-price {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .impulse-alert {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            animation: pulse 2s infinite;
+        }
+
+        .budget-tracker {
+            background: linear-gradient(135deg, #26de81, #20bf6b);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin: 1rem 0;
+        }
+
+        .progress-bar {
+            background: rgba(255,255,255,0.3);
+            height: 10px;
+            border-radius: 5px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: white;
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.3s;
+        }
+
+        .ai-suggestion {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .user-toggle {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 3rem 0;
+            margin-top: 4rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .notification {
+            background: #667eea;
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            animation: slideInRight 0.5s ease;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">🛒 Grocify</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#about">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>🛒 Grocify</h1>
+                <p>Your AI-Powered Smart Grocery Shopping Assistant</p>
+                <div class="user-toggle">
+                    <button class="toggle-btn active" onclick="showUserType('regular')">Regular Shopper</button>
+                    <button class="toggle-btn" onclick="showUserType('family')">Family Manager</button>
+                    <button class="toggle-btn" onclick="showUserType('budget')">Budget-Conscious</button>
+                    <button class="toggle-btn" onclick="showUserType('health')">Health-Focused</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Regular Shopper Experience -->
+    <div id="regular-content" class="content-section active">
+        <div class="container">
+            <div class="section-header">
+                <h2>Regular Shopper Experience</h2>
+                <p>Streamlined shopping for your daily needs</p>
+            </div>
+
+            <div class="demo-interface">
+                <h3>🗒️ Smart Grocery List</h3>
+                <div class="grocery-list">
+                    <div class="list-item">
+                        <span class="item-name">🥛 Milk (2L)</span>
+                        <span class="item-price">₹85</span>
+                    </div>
+                    <div class="list-item">
+                        <span class="item-name">🍞 Whole Wheat Bread</span>
+                        <span class="item-price">₹45</span>
+                    </div>
+                    <div class="list-item">
+                        <span class="item-name">🥚 Eggs (12 pack)</span>
+                        <span class="item-price">₹72</span>
+                    </div>
+                    <div class="list-item">
+                        <span class="item-name">🍌 Bananas (1kg)</span>
+                        <span class="item-price">₹60</span>
+                    </div>
+                </div>
+
+                <div class="ai-suggestion">
+                    💡 <strong>Smart Suggestion:</strong> Based on your purchase history, you usually buy apples with bananas. Add to list?
+                </div>
+
+                <div class="impulse-alert">
+                    ⚠️ <strong>Impulse Alert:</strong> Chocolate cookies detected! You've been avoiding snacks this week. Skip this?
+                </div>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎤</div>
+                    <h3>Voice-to-List</h3>
+                    <p>Simply say "Add milk and eggs" and AI transcribes and adds items to your list instantly.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📷</div>
+                    <h3>Barcode Scanner</h3>
+                    <p>Scan any product barcode to add exact items with price and nutritional information.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3>Smart Predictions</h3>
+                    <p>AI learns your patterns and suggests items you might need based on purchase history.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Family Manager Experience -->
+    <div id="family-content" class="content-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Family Manager Experience</h2>
+                <p>Collaborative shopping for the whole family</p>
+            </div>
+
+            <div class="demo-interface">
+                <h3>👨‍👩‍👧‍👦 Family Shopping List</h3>
+                <div class="grocery-list">
+                    <div class="list-item">
+                        <span class="item-name">🥛 Milk (4L) - <em>Added by Mom</em></span>
+                        <span class="item-price">₹160</span>
+                    </div>
+                    <div class="list-item">
+                        <span class="item-name">🍕 Pizza Base - <em>Added by Dad</em></span>
+                        <span class="item-price">₹95</span>
+                    </div>
+                    <div class="list-item">
+                        <span class="item-name">🥣 Cereal - <em>Added by Kids</em></span>
+                        <span class="item-price">₹180</span>
+                    </div>
+                </div>
+
+                <div class="notification">
+                    🔔 Sarah added "Organic Spinach" to the list
+                </div>
+
+                <div class="ai-suggestion">
+                    👨‍👩‍👧‍👦 <strong>Family Insight:</strong> You're shopping for 4 people. Consider bulk buying rice and lentils for better savings.
+                </div>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Real-Time Sync</h3>
+                    <p>Family members can add items from anywhere, and everyone sees updates instantly.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Multi-User Access</h3>
+                    <p>Each family member has their own profile with personalized suggestions and preferences.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Role-Based Lists</h3>
+                    <p>Create separate lists for different family members or occasions (kids' snacks, dinner party, etc.).</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Budget-Conscious Experience -->
+    <div id="budget-content" class="content-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Budget-Conscious Experience</h2>
+                <p>Smart shopping within your budget limits</p>
+            </div>
+
+            <div class="demo-interface">
+                <div class="budget-tracker">
+                    <h3>💰 Weekly Budget Tracker</h3>
+                    <p>Budget: ₹2,000 | Spent: ₹1,450 | Remaining: ₹550</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 72.5%"></div>
+                    </div>
+                    <p><strong>72.5%</strong> of budget used</p>
+                </div>
+
+                <div class="grocery-list">
+                    <div class="list-item">
+                        <span class="item-name">🥛 Brand A Milk</span>
+                        <span class="item-price">₹85</span>
+                    </div>
+                    <div class="list-item">
+                        <span class="item-name">🍞 Store Brand Bread</span>
+                        <span class="item-price">₹35 <small>(₹10 saved!)</small></span>
+                    </div>
+                </div>
+
+                <div class="ai-suggestion">
+                    💡 <strong>Money-Saving Tip:</strong> Switch to Store Brand pasta to save ₹15. Same quality, better price!
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">₹240</div>
+                        <p>Saved This Month</p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">15%</div>
+                        <p>Below Budget</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">💵</div>
+                    <h3>Real-Time Budget Tracking</h3>
+                    <p>See your spending in real-time with visual budget meters and alerts before overspending.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏷️</div>
+                    <h3>Deal Finder</h3>
+                    <p>Automatically finds the best deals and discounts at nearby stores for items on your list.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Spending Analytics</h3>
+                    <p>Monthly reports showing where your money goes and suggestions for better budgeting.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Health-Focused Experience -->
+    <div id="health-content" class="content-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Health-Focused Experience</h2>
+                <p>Nutritious shopping for a healthier lifestyle</p>
+            </div>
+
+            <div class="demo-interface">
+                <h3>🥗 Nutrition-Aware Shopping</h3>
+                <div class="grocery-list">
+                    <div class="list-item">
+                        <span class="item-name">🥬 Organic Kale <small>(High in Vitamin K)</small></span>
+                        <span class="item-price">₹120</span>
+                    </div>
+                    <div class="list-item">
+                        <span class="item-name">🐟 Salmon Fillet <small>(Omega-3 rich)</small></span>
+                        <span class="item-price">₹450</span>
+                    </div>
+                    <div class="list-item">
+                        <span class="item-name">🥜 Almonds <small>(Healthy fats)</small></span>
+                        <span class="item-price">₹280</span>
+                    </div>
+                </div>
+
+                <div class="ai-suggestion">
+                    🥗 <strong>Nutrition Insight:</strong> You're low on fiber this week. Consider adding oats or quinoa to boost your intake!
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">1,850</div>
+                        <p>Daily Calories</p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">45g</div>
+                        <p>Protein Target</p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">8/10</div>
+                        <p>Health Score</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Nutritional Analysis</h3>
+                    <p>Get detailed nutritional information for every item and track your daily intake goals.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🍽️</div>
+                    <h3>Recipe Suggestions</h3>
+                    <p>AI suggests healthy recipes based on ingredients you have and dietary preferences.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Health Alerts</h3>
+                    <p>Warnings about allergens, high sodium, or unhealthy choices based on your health profile.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <h3>🛒 Grocify - Smart Grocery Shopping Assistant</h3>
+            <p>Experience the future of grocery shopping with AI-powered intelligence</p>
+            <p><strong>🚀 All Core Features Included:</strong></p>
+            <p>✅ <strong>Smart Grocery List:</strong> Voice-to-list | Barcode Scanner | Smart Predictions | Auto Categorization | Frequency Reminders | Store Layout Mapping</p>
+            <p>✅ <strong>Budget Cart:</strong> Real-time Expense Tracker | Visual Budget Meters | Smart Alternatives | Price History | Spending Reports</p>
+            <p>✅ <strong>Local Deals Radar:</strong> Deal Aggregation | Store Routing Optimization | Price Drop Alerts</p>
+            <p>✅ <strong>Impulse Guard:</strong> Pattern Detection AI | 10-second Pause Nudges | End-of-trip Reflection</p>
+            <p>✅ <strong>Pack & Carry:</strong> Bag Type Predictor | Weight Estimation | Home Delivery Sync</p>
+            <p>✅ <strong>AI-Powered Assistance:</strong> Smart Suggestions | Nutritional Analysis | Leftover Assistant | Weather-based Recommendations</p>
+            <p>✅ <strong>Family Features:</strong> Multi-user Sync | Real-time Notifications | Gamification | Collaborative Lists</p>
+            <p>✅ <strong>Health Features:</strong> Dietary Matching | Health Alerts | Goal Tracking | Fitness App Integration</p>
+            <p style="margin-top: 2rem; opacity: 0.8;">This is a static demo showcasing Grocify's features. The full app includes real-time synchronization, backend integration, and personalized AI recommendations.</p>
+        </div>
+    </footer>
+
+    <script>
+        function showUserType(type) {
+            // Hide all content sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.toggle-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected content and activate button
+            document.getElementById(type + '-content').classList.add('active');
+            event.target.classList.add('active');
+            
+            // Smooth scroll to content
+            document.getElementById(type + '-content').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+
+        // Add some interactive animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate feature cards on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('.feature-card').forEach(card => {
+                observer.observe(card);
+            });
+            
+            // Simulate real-time updates for demo
+            setInterval(() => {
+                const notifications = document.querySelectorAll('.notification');
+                notifications.forEach(notification => {
+                    notification.style.animation = 'none';
+                    setTimeout(() => {
+                        notification.style.animation = 'slideInRight 0.5s ease';
+                    }, 100);
+                });
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
