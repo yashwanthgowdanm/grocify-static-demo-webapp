@@ -1,120 +1,79 @@
-Grocify – Smart Grocery Shopping Assistant (Static Demo)
-📌 Overview
+# Grocify – Smart Grocery Shopping Assistant (Interactive Demo)
 
-Grocify is a static demo web page showcasing the concept of an AI-powered grocery shopping assistant.
-It provides an interactive prototype highlighting multiple user experiences:
+Grocify is a working, front-end demo of an AI-assisted grocery app. Unlike the original static showcase, every screen here is interactive: you can build a list, check items off, finish a trip, and watch the budget, health score and predictions update.
 
-Regular Shopper
+Data is saved in your browser (localStorage), so nothing leaves your device. Use **Reset demo data** in the banner to start over with the sample list and history.
 
-Family Manager
+## Features
 
-Budget-Conscious Shopper
+**List**
+- Natural-language quick add: `2L milk, eggs x2, 500 g paneer, bananas ₹60`
+- Quantities, units and prices detected automatically, from a built-in catalog of 65 common Indian grocery items with ₹ prices
+- Items grouped by store aisle (store layout mapping)
+- Multiple lists (Weekly, Party, Kids…), quantity steppers, edit and delete
+- Duplicate items merge instead of repeating
 
-Health-Focused Shopper
+**Smart suggestions**
+- "Usually bought with…" pairings learned from past trips
+- Frequency reminders ("you buy milk every ~4 days, last 5 days ago")
+- "Due soon" list in the Plan tab
 
-This demo is front-end only (HTML, CSS, and JavaScript) with no backend integration. It is designed for presentation and concept visualization.
+**Budget**
+- Weekly budget meter: spent this week, in cart, still planned
+- Alerts at 80%, when the list would exceed the budget, and when over
+- Cheaper store-brand alternatives with one-tap switching
+- Finish trip: saves history, clears checked items, shows an end-of-trip reflection
+- Spending by category (last 30 days), past trips, savings this month
 
-🚀 Features
-🌐 General
+**Impulse Guard**
+- A 10-second pause before adding snacks, sweets and soft drinks
+- Skip it (savings tracked), take a healthier swap, or add anyway after the timer
+- Can be switched off in Budget settings
 
-Responsive layout (desktop & mobile friendly).
+**Health**
+- Profile: diet (vegetarian, eggetarian, vegan), allergies, goals (low sugar, low sodium, heart healthy)
+- List health score out of 10, protein and fiber sources, share of fresh produce
+- Flags for items that conflict with the profile, plus healthier swaps
 
-Smooth scrolling and animations.
+**Plan**
+- Recipes matched against your list and what's already in your kitchen, with "add missing to list"
+- Pack & carry: estimated weight, bag count, cold-bag and fragile-item tips
 
-Interactive navigation with toggle buttons.
+## Run it
 
-👥 User Experiences
+No build step. Open `index.html` in a browser, or serve the folder:
 
-Regular Shopper
+```bash
+python3 -m http.server 8000
+# then visit http://localhost:8000
+```
 
-Smart Grocery List
+## Deploy to GitHub Pages
 
-AI Suggestions
+1. Copy the contents of this folder into your repository root (replacing the old `index.html`).
+2. Commit and push.
+3. In the repository's **Settings → Pages**, set the source to the `main` branch, root folder.
 
-Impulse Purchase Alerts
+## Project structure
 
-Features: Voice-to-List, Barcode Scanner, Smart Predictions
+```
+index.html        Page markup
+css/styles.css    Styles, light and dark themes
+js/app.js         App logic, catalog, parser, storage
+.nojekyll         Tells GitHub Pages to serve files as-is
+```
 
-Family Manager
+## Roadmap to a production app
 
-Shared Family Shopping List
+The demo stores data per browser. A production version would add:
 
-Real-time Notifications (simulated)
+- **Backend and real-time sync** (e.g. Firebase or Supabase) for shared family lists across devices
+- **Accounts and household invites**
+- **Voice input** (Web Speech API) and **barcode scanning** (BarcodeDetector API or a library like ZXing) with a product database such as Open Food Facts
+- **AI features** (meal plans, photo-of-list import) via an LLM API on the server
+- **Live deals and prices** from store or quick-commerce partners
+- **PWA** support for install and offline use
 
-Family Insights (bulk buying tips)
+## Tech
 
-Features: Real-time Sync, Multi-User Access, Role-Based Lists
-
-Budget-Conscious Shopper
-
-Weekly Budget Tracker
-
-Savings and Spending Analytics
-
-Deal Finder & Money-Saving Tips
-
-Features: Budget Tracking, Discounts, Analytics
-
-Health-Focused Shopper
-
-Nutrition-Aware Shopping
-
-Health Insights & Alerts
-
-Recipe Suggestions
-
-Features: Nutritional Analysis, Diet Tracking, Fitness Integration
-
-📊 Footer Highlights
-
-The footer summarizes all core Grocify features, including:
-
-Smart Grocery List
-
-Budget Cart
-
-Local Deals Radar
-
-Impulse Guard
-
-Pack & Carry
-
-AI-Powered Assistance
-
-Family Features
-
-Health Features
-
-🛠️ Tech Stack
-
-HTML5 – Page structure
-
-CSS3 – Styling and animations
-
-JavaScript (Vanilla) – Interactivity and dynamic content
-
-No external libraries – Lightweight and self-contained
-
-📂 Project Structure
-grocify-static-demo.html   # Main HTML file with embedded CSS and JS
-
-▶️ How to Run
-
-Clone or download the project.
-
-Open grocify-static-demo.html in any modern web browser (Chrome, Edge, Firefox, etc.).
-
-Explore different shopper modes by clicking on the toggle buttons in the hero section.
-
-⚠️ Notes
-
-This is a static concept demo only.
-
-Features like real-time sync, budget tracking, nutritional analysis, and backend AI are simulated with static examples.
-
-For production, backend services and APIs would be required.
-
-📜 License
-
-This project is for educational and demo purposes only.
-Feel free to adapt and extend it for your own projects.
+Plain HTML, CSS and JavaScript. Fonts: Bricolage Grotesque and Figtree (Google Fonts).
